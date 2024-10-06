@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme Generator</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: none;
+            overflow: hidden;
+        }
+        #meme-container {
+            width: 500px;
+            background-color: #D4D0C8;
+            border: 2px solid #808080;
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        #toolbar {
+            background: linear-gradient(to bottom, #000080, #0000A8);
+            color: white;
+            font-size: 14px;
+            padding: 10px;
+            margin: 0;
+            font-family: 'MS Sans Serif', Tahoma, sans-serif;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+            position: relative;
+            top: 0;
+        }
+        p, label {
+            font-size: 12px;
+            color: #000;
+            margin-top: 10px;
+            font-family: 'MS Sans Serif', Tahoma, sans-serif;
+            margin-left: 5px;
+        }
+        select, input[type="text"], input[type="file"], input[type="color"] {
+            width: 280px;
+            padding: 3px;
+            border: 2px solid #808080;
+            background-color: #FFF;
+            font-family: 'MS Sans Serif', Tahoma, sans-serif;
+            font-size: 12px;
+            color: #000;
+            margin-left: 5px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 5px 20px;
+            background-color: #D4D0C8;
+            border: 2px solid #808080;
+            font-family: 'MS Sans Serif', Tahoma, sans-serif;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        button:hover {
+            background-color: #C0C0C0;
+        }
+        #meme-canvas {
+            border: 1px solid #000;
+            margin-top: 10px;
+            display: block;
+            background-color: white;
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="meme-container">
+        <div id="toolbar">Meme Generator</div>
+        <p>Hey dogs, guess what's needed after we pass the bonding curve?</p>
+        <p>Some cool memes of Cheddariniii because I'm not the UFC Mouseweight champion and the coolest dog by default?</p>
+        
+        <div id="controls">
+            <label for="meme-image">Choose a Meme:</label>
+            <select id="meme-image" onchange="loadImage()">
+                <option value="https://i.imgur.com/VUjL1Sp.png">Meme 1</option>
+                <option value="https://i.imgur.com/2ECkC4c.png">Meme 2</option>
+                <option value="https://i.imgur.com/IyUsg7K.png">Meme 3</option>
+                <option value="https://i.imgur.com/3GE4GHs.png">Meme 4</option>
+            </select>
+            
+            <br>
+
+            <label for="custom-text">Enter Your Text:</label>
+            <input type="text" id="custom-text" value="Insert Text" placeholder="Enter your text here" />
+
+            <br>
+
+            <label for="font-color">Font Color:</label>
+            <input type="color" id="font-color" value="#ffffff" />
+
+            <br>
+
+            <button onclick="updateMeme()">Generate Meme</button>
+            <button onclick="downloadMeme()">Download Image</button>
+        </div>
+
+        <canvas id="meme-canvas" width="300" height="300"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('meme-canvas');
+        const ctx = canvas.getContext('2d');
+        let image = new Image();
+
+        // Function to load the image
+        function loadImage() {
+            const selectedImage = document.getElementById('meme-image').value;
+            image.crossOrigin = "anonymous";
+            image.src = selectedImage;
+            image.onload = function () {
+                canvas.width = image.width;
+                canvas.height = image.height;
+                drawCanvas();
+            };
+        }
+
+        // Function to draw the image and text on canvas
+        function drawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+            addText();
+        }
+
+        // Function to add text
+        function addText() {
+            const customText = document.getElementById('custom-text').value || "Insert Text";
+            const fontColor = document.getElementById('font-color').value; // Get selected font color
+            const fontSize = Math.floor(canvas.height / 12);
+            ctx.fillStyle = fontColor;
+            ctx.textAlign = 'center';
+            ctx.font = `${fontSize}px 'MS Sans Serif', Tahoma, sans-serif`;
+
+            const selectedImage = document.getElementById('meme-image').value;
+
+            if (selectedImage === "https://i.imgur.com/VUjL1Sp.png") {
+                ctx.fillText(customText, canvas.width / 2, canvas.height - 40);
+            } else if (selectedImage === "https://i.imgur.com/2ECkC4c.png") {
+                ctx.fillText(customText, canvas.width / 2, canvas.height - 30);
+            } else if (selectedImage === "https://i.imgur.com/IyUsg7K.png") {
+                ctx.fillText(customText, canvas.width / 2, 60);
+            } else if (selectedImage === "https://i.imgur.com/3GE4GHs.png") {
+                ctx.fillText(customText, 100, canvas.height - 30);
+            }
+        }
+
+        // Function to generate and download meme
+        function updateMeme() {
+            drawCanvas();
+        }
+
+        // Function to download the meme image
+        function downloadMeme() {
+            const link = document.createElement('a');
+            link.download = 'meme.png';
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Load the default meme image when the page loads
+        window.onload = loadImage;
+    </script>
+</body>
+</html>
