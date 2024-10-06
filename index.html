@@ -8,22 +8,19 @@
         html, body {
             margin: 0;
             padding: 0;
-            /* Add the background image here */
-            background-image: url('https://i.imgur.com/1iBLefg.png'); /* Your background image */
-            background-size: cover; /* Make the background cover the whole page */
-            background-position: center; /* Center the background image */
-            overflow: hidden;
+            background: url('https://i.imgur.com/1iBLefg.png') no-repeat center center fixed; /* Add the background image */
+            background-size: cover; /* Ensure the background covers the entire page */
+            overflow: hidden; /* Prevent scrollbars */
         }
         #meme-container {
             width: 500px;
-            background-color: rgba(212, 208, 200, 0.9); /* Make background slightly transparent */
+            background-color: #D4D0C8;
             border: 2px solid #808080;
             box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 1; /* Ensure meme container is on top */
         }
         #toolbar {
             background: linear-gradient(to bottom, #000080, #0000A8);
@@ -141,26 +138,20 @@
         function addText() {
             const customText = document.getElementById('custom-text').value || "Insert Text";
             const fontColor = document.getElementById('font-color').value; // Get selected font color
-            const fontSize = Math.floor(canvas.height / 12); // Default font size for other memes
-            const meme1FontSize = Math.floor(canvas.height / 8); // Larger font size for Meme 1
-            const meme2FontSize = Math.floor(canvas.height / 9); // Larger font size for Meme 2
-            
+            const fontSize = Math.floor(canvas.height / 12);
             ctx.fillStyle = fontColor;
             ctx.textAlign = 'center';
-            
+            ctx.font = `${fontSize}px 'MS Sans Serif', Tahoma, sans-serif`;
+
             const selectedImage = document.getElementById('meme-image').value;
 
             if (selectedImage === "https://i.imgur.com/VUjL1Sp.png") {
-                ctx.font = `${meme1FontSize}px 'MS Sans Serif', Tahoma, sans-serif`; // Larger font for Meme 1
                 ctx.fillText(customText, canvas.width / 2, canvas.height - 40);
             } else if (selectedImage === "https://i.imgur.com/2ECkC4c.png") {
-                ctx.font = `${meme2FontSize}px 'MS Sans Serif', Tahoma, sans-serif`; // Larger font for Meme 2
-                ctx.fillText(customText, canvas.width / 2, canvas.height - 30);
+                ctx.fillText(customText, 20, 20); // Move text to the top left (20px from the left and top)
             } else if (selectedImage === "https://i.imgur.com/IyUsg7K.png") {
-                ctx.font = `${fontSize}px 'MS Sans Serif', Tahoma, sans-serif`; // Default font size for Meme 3
                 ctx.fillText(customText, canvas.width / 2, 60);
             } else if (selectedImage === "https://i.imgur.com/3GE4GHs.png") {
-                ctx.font = `${fontSize}px 'MS Sans Serif', Tahoma, sans-serif`; // Default font size for Meme 4
                 ctx.fillText(customText, 100, canvas.height - 30);
             }
         }
