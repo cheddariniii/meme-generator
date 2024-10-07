@@ -225,6 +225,7 @@
         canvas.addEventListener('mousedown', startDrag);
         canvas.addEventListener('mousemove', dragText);
         canvas.addEventListener('mouseup', stopDrag);
+        canvas.addEventListener('mouseleave', stopDrag); // Reset dragging when mouse leaves canvas
     </script>
 </body>
-</html
+</html>
