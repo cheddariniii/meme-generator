@@ -217,7 +217,6 @@
         // Function to drag text
         function dragText(event) {
             if (isDragging) {
-                // Convert mouse position to canvas coordinates
                 const rect = canvas.getBoundingClientRect();
                 const mouseX = event.clientX - rect.left;
                 const mouseY = event.clientY - rect.top;
@@ -227,7 +226,7 @@
                 const newY = mouseY - offsetY;
 
                 const customText = document.getElementById('custom-text').value || "Insert Text";
-                const fontSize = parseInt(document.getElementById('font-size').value); // Get selected font size
+                const fontSize = parseInt(document.getElementById('font-size').value);
                 const textWidth = ctx.measureText(customText).width;
 
                 // Ensure new positions are within canvas bounds
