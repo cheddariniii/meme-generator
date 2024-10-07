@@ -9,7 +9,7 @@
             margin: 0;
             padding: 0;
             background: url('https://i.imgur.com/ImI3tHK.png') no-repeat center center fixed;
-            background-size: cover; /* This makes the background cover the entire area */
+            background-size: cover; /* Makes the background cover the entire area */
             overflow: hidden;
         }
         #meme-container {
@@ -73,6 +73,10 @@
             max-width: 100%;
             height: auto;
         }
+        #text-position {
+            position: absolute;
+            user-select: none; /* Prevent text selection while dragging */
+        }
     </style>
 </head>
 <body>
@@ -103,17 +107,30 @@
 
             <br>
 
+            <label for="font-size">Font Size:</label>
+            <input type="range" id="font-size" min="12" max="72" value="32" step="1" oninput="updateFontSize()" />
+            <span id="font-size-display">32px</span> <!-- Display current font size -->
+
+            <br>
+
             <button onclick="updateMeme()">Generate Meme</button>
             <button onclick="downloadMeme()">Download Image</button>
         </div>
 
         <canvas id="meme-canvas" width="300" height="300"></canvas>
+        <div id="text-position"> <!-- Container for draggable text -->
+            <span id="draggable-text" style="position: absolute; left: 100px; top: 100px;" onmousedown="startDrag(event)">Insert Text</span>
+        </div>
     </div>
 
     <script>
         const canvas = document.getElementById('meme-canvas');
         const ctx = canvas.getContext('2d');
         let image = new Image();
+        let textX = 100; // Initial X position of text
+        let textY = 100; // Initial Y position of text
+        let isDragging = false;
+        let offsetX, offsetY;
 
         // Function to load the image
         function loadImage() {
@@ -138,22 +155,12 @@
         function addText() {
             const customText = document.getElementById('custom-text').value || "Insert Text";
             const fontColor = document.getElementById('font-color').value; // Get selected font color
-            const fontSize = Math.floor(canvas.height / 12);
+            const fontSize = parseInt(document.getElementById('font-size').value); // Get selected font size
             ctx.fillStyle = fontColor;
             ctx.textAlign = 'center';
             ctx.font = `bold ${fontSize}px 'MS Sans Serif', Tahoma, sans-serif`; // Make font bold
 
-            const selectedImage = document.getElementById('meme-image').value;
-
-            if (selectedImage === "https://i.imgur.com/VUjL1Sp.png") {
-                ctx.fillText(customText, canvas.width / 2, canvas.height - 40);
-            } else if (selectedImage === "https://i.imgur.com/2ECkC4c.png") {
-                ctx.fillText(customText, canvas.width / 2, canvas.height - 20); // Higher and more left
-            } else if (selectedImage === "https://i.imgur.com/IyUsg7K.png") {
-                ctx.fillText(customText, canvas.width / 2, 60);
-            } else if (selectedImage === "https://i.imgur.com/3GE4GHs.png") {
-                ctx.fillText(customText, 130, canvas.height - 30); // Moved further right
-            }
+            ctx.fillText(customText, textX, textY);
         }
 
         // Function to generate and download meme
@@ -169,6 +176,39 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        }
+
+        // Function to update font size from range input
+        function updateFontSize() {
+            const fontSize = document.getElementById('font-size').value;
+            document.getElementById('font-size-display').innerText = `${fontSize}px`;
+            updateMeme();
+        }
+
+        // Function to start dragging text
+        function startDrag(event) {
+            isDragging = true;
+            offsetX = event.clientX - textX; // Calculate offset
+            offsetY = event.clientY - textY; // Calculate offset
+            
+            document.addEventListener('mousemove', dragText); // Attach event listener for dragging
+            document.addEventListener('mouseup', stopDrag); // Attach event listener for stopping drag
+        }
+
+        // Function to drag text
+        function dragText(event) {
+            if (isDragging) {
+                textX = event.clientX - offsetX; // Update text X position
+                textY = event.clientY - offsetY; // Update text Y position
+                updateMeme(); // Update meme with new text position
+            }
+        }
+
+        // Function to stop dragging text
+        function stopDrag() {
+            isDragging = false; // Reset dragging state
+            document.removeEventListener('mousemove', dragText); // Remove event listener for dragging
+            document.removeEventListener('mouseup', stopDrag); // Remove event listener for stopping drag
         }
 
         // Load the default meme image when the page loads
