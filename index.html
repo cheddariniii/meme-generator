@@ -113,7 +113,7 @@
             <button onclick="downloadMeme()">Download Image</button>
         </div>
 
-        <canvas id="meme-canvas" width="300" height="300"></canvas>
+        <canvas id="meme-canvas" width="1042" height="782"></canvas> <!-- Default canvas size -->
     </div>
 
     <script>
@@ -121,10 +121,10 @@
         const ctx = canvas.getContext('2d');
         let image = new Image();
         const memePositions = {
-            1: { x: 100, y: 100 }, // Initial position for Meme 1
-            2: { x: 100, y: 100 }, // Initial position for Meme 2
-            3: { x: 100, y: 100 }, // Initial position for Meme 3
-            4: { x: 100, y: 100 }  // Initial position for Meme 4
+            1: { x: 521, y: 391 }, // Centered for Meme 1
+            2: { x: 310, y: 206 }, // Centered for Meme 2
+            3: { x: 150, y: 150 }, // Centered for Meme 3
+            4: { x: 150, y: 150 }  // Centered for Meme 4
         };
         let isDragging = false;
         let currentMeme = 1; // Track which meme is currently selected
@@ -202,12 +202,10 @@
             const fontSize = parseInt(document.getElementById('font-size').value);
             const textWidth = ctx.measureText(customText).width;
 
-            // Convert mouse position to canvas coordinates
             const rect = canvas.getBoundingClientRect();
             const mouseX = event.clientX - rect.left;
             const mouseY = event.clientY - rect.top;
 
-            // Check if the click is within the bounds of the text
             const { x, y } = memePositions[currentMeme];
             if (mouseX >= x - textWidth / 2 && mouseX <= x + textWidth / 2 && mouseY >= y - fontSize && mouseY <= y) {
                 isDragging = true;
