@@ -134,17 +134,21 @@
         function loadImage() {
             const selectedMeme = document.getElementById('meme-image').value;
             currentMeme = selectedMeme; // Update the current meme
+
             const memeImages = [
-                "https://i.imgur.com/VUjL1Sp.png", // Meme 1
-                "https://i.imgur.com/2ECkC4c.png", // Meme 2
-                "https://i.imgur.com/IyUsg7K.png", // Meme 3
-                "https://i.imgur.com/3GE4GHs.png"  // Meme 4
+                { src: "https://i.imgur.com/VUjL1Sp.png", width: 1042, height: 782 }, // Meme 1
+                { src: "https://i.imgur.com/2ECkC4c.png", width: 620, height: 412 }, // Meme 2
+                { src: "https://i.imgur.com/IyUsg7K.png", width: 300, height: 300 }, // Meme 3
+                { src: "https://i.imgur.com/3GE4GHs.png", width: 300, height: 300 }  // Meme 4
             ];
+
             image.crossOrigin = "anonymous";
-            image.src = memeImages[selectedMeme - 1];
+            image.src = memeImages[selectedMeme - 1].src;
+
             image.onload = function () {
-                canvas.width = image.width;
-                canvas.height = image.height;
+                // Set canvas dimensions based on the selected meme
+                canvas.width = memeImages[selectedMeme - 1].width;
+                canvas.height = memeImages[selectedMeme - 1].height;
                 drawCanvas(selectedMeme);
             };
         }
@@ -204,12 +208,11 @@
             const mouseY = event.clientY - rect.top;
 
             // Check if the click is within the bounds of the text
-            const { x, y } = memePositions[currentMeme]; // Get current position for selected meme
-            if (mouseX >= x - textWidth / 2 && mouseX <= x + textWidth / 2 &&
-                mouseY >= y - fontSize && mouseY <= y) {
+            const { x, y } = memePositions[currentMeme];
+            if (mouseX >= x - textWidth / 2 && mouseX <= x + textWidth / 2 && mouseY >= y - fontSize && mouseY <= y) {
                 isDragging = true;
-                offsetX = mouseX - x; // Calculate offset
-                offsetY = mouseY - y; // Calculate offset
+                offsetX = mouseX - x;
+                offsetY = mouseY - y;
             }
         }
 
@@ -225,10 +228,13 @@
                 const newX = mouseX - offsetX;
                 const newY = mouseY - offsetY;
 
-                memePositions[currentMeme].x = Math.max(0 + ctx.measureText(document.getElementById('custom-text').value).width / 2,
-                    Math.min(newX, canvas.width - ctx.measureText(document.getElementById('custom-text').value).width / 2));
-                memePositions[currentMeme].y = Math.max(0 + parseInt(document.getElementById('font-size').value),
-                    Math.min(newY, canvas.height)); // Ensure y position is within bounds
+                const customText = document.getElementById('custom-text').value || "Insert Text";
+                const fontSize = parseInt(document.getElementById('font-size').value); // Get selected font size
+                const textWidth = ctx.measureText(customText).width;
+
+                // Ensure new positions are within canvas bounds
+                memePositions[currentMeme].x = Math.max(textWidth / 2, Math.min(newX, canvas.width - textWidth / 2));
+                memePositions[currentMeme].y = Math.max(fontSize, Math.min(newY, canvas.height)); // Ensure y position is within bounds
 
                 updateMeme(); // Redraw the canvas with updated position
             }
