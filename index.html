@@ -85,10 +85,10 @@
         <div id="controls">
             <label for="meme-image">Choose a Meme:</label>
             <select id="meme-image" onchange="loadImage()">
-                <option value="https://i.imgur.com/VUjL1Sp.png">Meme 1</option>
-                <option value="https://i.imgur.com/2ECkC4c.png">Meme 2</option>
-                <option value="https://i.imgur.com/IyUsg7K.png">Meme 3</option>
-                <option value="https://i.imgur.com/3GE4GHs.png">Meme 4</option>
+                <option value="1">Meme 1</option>
+                <option value="2">Meme 2</option>
+                <option value="3">Meme 3</option>
+                <option value="4">Meme 4</option>
             </select>
             
             <br>
@@ -120,32 +120,42 @@
         const canvas = document.getElementById('meme-canvas');
         const ctx = canvas.getContext('2d');
         let image = new Image();
-        let textX = 100; // Initial X position of text
-        let textY = 100; // Initial Y position of text
+        const memePositions = {
+            1: { x: 100, y: 100 }, // Initial position for Meme 1
+            2: { x: 100, y: 100 }, // Initial position for Meme 2
+            3: { x: 100, y: 100 }, // Initial position for Meme 3
+            4: { x: 100, y: 100 }  // Initial position for Meme 4
+        };
         let isDragging = false;
         let offsetX = 0, offsetY = 0; // To hold the offsets for dragging
 
         // Function to load the image
         function loadImage() {
-            const selectedImage = document.getElementById('meme-image').value;
+            const selectedMeme = document.getElementById('meme-image').value;
+            const memeImages = [
+                "https://i.imgur.com/VUjL1Sp.png", // Meme 1
+                "https://i.imgur.com/2ECkC4c.png", // Meme 2
+                "https://i.imgur.com/IyUsg7K.png", // Meme 3
+                "https://i.imgur.com/3GE4GHs.png"  // Meme 4
+            ];
             image.crossOrigin = "anonymous";
-            image.src = selectedImage;
+            image.src = memeImages[selectedMeme - 1];
             image.onload = function () {
                 canvas.width = image.width;
                 canvas.height = image.height;
-                drawCanvas();
+                drawCanvas(selectedMeme);
             };
         }
 
         // Function to draw the image and text on canvas
-        function drawCanvas() {
+        function drawCanvas(selectedMeme) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-            addText();
+            addText(selectedMeme);
         }
 
         // Function to add text
-        function addText() {
+        function addText(selectedMeme) {
             const customText = document.getElementById('custom-text').value || "Insert Text";
             const fontColor = document.getElementById('font-color').value; // Get selected font color
             const fontSize = parseInt(document.getElementById('font-size').value); // Get selected font size
@@ -153,12 +163,14 @@
             ctx.textAlign = 'center';
             ctx.font = `bold ${fontSize}px 'MS Sans Serif', Tahoma, sans-serif`; // Make font bold
 
-            ctx.fillText(customText, textX, textY);
+            const { x, y } = memePositions[selectedMeme]; // Get text position for the selected meme
+            ctx.fillText(customText, x, y);
         }
 
         // Function to generate and download meme
         function updateMeme() {
-            drawCanvas();
+            const selectedMeme = document.getElementById('meme-image').value;
+            drawCanvas(selectedMeme);
         }
 
         // Function to download the meme image
@@ -180,6 +192,7 @@
 
         // Function to start dragging text
         function startDrag(event) {
+            const selectedMeme = document.getElementById('meme-image').value;
             const customText = document.getElementById('custom-text').value || "Insert Text";
             const fontSize = parseInt(document.getElementById('font-size').value);
             const textWidth = ctx.measureText(customText).width;
@@ -191,32 +204,29 @@
             const mouseY = event.clientY - rect.top;
 
             // Check if the click is within the bounds of the text
-            if (mouseX >= textX - textWidth / 2 && mouseX <= textX + textWidth / 2 &&
-                mouseY >= textY - textHeight && mouseY <= textY) {
+            const { x, y } = memePositions[selectedMeme]; // Get current position for selected meme
+            if (mouseX >= x - textWidth / 2 && mouseX <= x + textWidth / 2 &&
+                mouseY >= y - textHeight && mouseY <= y) {
                 isDragging = true;
-                offsetX = mouseX - textX; // Calculate offset
-                offsetY = mouseY - textY; // Calculate offset
+                offsetX = mouseX - x; // Calculate offset
+                offsetY = mouseY - y; // Calculate offset
             }
         }
 
         // Function to drag text
         function dragText(event) {
             if (isDragging) {
+                const selectedMeme = document.getElementById('meme-image').value;
+
                 // Convert mouse position to canvas coordinates
                 const rect = canvas.getBoundingClientRect();
                 const mouseX = event.clientX - rect.left;
                 const mouseY = event.clientY - rect.top;
 
-                textX = mouseX - offsetX; // Update text X position
-                textY = mouseY - offsetY; // Update text Y position
-
-                // Limit dragging within the canvas
-                if (textX < 0) textX = 0;
-                if (textX > canvas.width) textX = canvas.width;
-                if (textY < 0) textY = 0;
-                if (textY > canvas.height) textY = canvas.height;
-
-                updateMeme(); // Update meme with new text position
+                // Update the text position for the selected meme
+                memePositions[selectedMeme].x = mouseX - offsetX; // Update x position
+                memePositions[selectedMeme].y = mouseY - offsetY; // Update y position
+                updateMeme(); // Redraw the canvas with updated position
             }
         }
 
