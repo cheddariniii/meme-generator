@@ -73,10 +73,6 @@
             max-width: 100%;
             height: auto;
         }
-        #text-position {
-            position: absolute;
-            user-select: none; /* Prevent text selection while dragging */
-        }
     </style>
 </head>
 <body>
@@ -118,9 +114,6 @@
         </div>
 
         <canvas id="meme-canvas" width="300" height="300"></canvas>
-        <div id="text-position"> <!-- Container for draggable text -->
-            <span id="draggable-text" style="position: absolute; left: 100px; top: 100px;" onmousedown="startDrag(event)">Insert Text</span>
-        </div>
     </div>
 
     <script>
@@ -187,12 +180,21 @@
 
         // Function to start dragging text
         function startDrag(event) {
-            isDragging = true;
-            offsetX = event.clientX - textX; // Calculate offset
-            offsetY = event.clientY - textY; // Calculate offset
-            
-            document.addEventListener('mousemove', dragText); // Attach event listener for dragging
-            document.addEventListener('mouseup', stopDrag); // Attach event listener for stopping drag
+            const customText = document.getElementById('custom-text').value || "Insert Text";
+            const fontSize = parseInt(document.getElementById('font-size').value);
+            const textWidth = ctx.measureText(customText).width;
+            const textHeight = fontSize; // Approximate height based on font size
+
+            // Check if the click is within the bounds of the text
+            if (event.clientX >= textX - textWidth / 2 && event.clientX <= textX + textWidth / 2 &&
+                event.clientY >= textY - textHeight && event.clientY <= textY) {
+                isDragging = true;
+                offsetX = event.clientX - textX; // Calculate offset
+                offsetY = event.clientY - textY; // Calculate offset
+                
+                document.addEventListener('mousemove', dragText); // Attach event listener for dragging
+                document.addEventListener('mouseup', stopDrag); // Attach event listener for stopping drag
+            }
         }
 
         // Function to drag text
@@ -210,6 +212,9 @@
             document.removeEventListener('mousemove', dragText); // Remove event listener for dragging
             document.removeEventListener('mouseup', stopDrag); // Remove event listener for stopping drag
         }
+
+        // Attach the mouse down event to the canvas
+        canvas.addEventListener('mousedown', startDrag);
 
         // Load the default meme image when the page loads
         window.onload = loadImage;
