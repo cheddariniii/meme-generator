@@ -196,9 +196,6 @@
                 isDragging = true;
                 offsetX = mouseX - textX; // Calculate offset
                 offsetY = mouseY - textY; // Calculate offset
-                
-                document.addEventListener('mousemove', dragText); // Attach event listener for dragging
-                document.addEventListener('mouseup', stopDrag); // Attach event listener for stopping drag
             }
         }
 
@@ -219,15 +216,15 @@
         // Function to stop dragging text
         function stopDrag() {
             isDragging = false; // Reset dragging state
-            document.removeEventListener('mousemove', dragText); // Remove event listener for dragging
-            document.removeEventListener('mouseup', stopDrag); // Remove event listener for stopping drag
         }
 
         // Load the default meme image when the page loads
         window.onload = loadImage;
 
-        // Add event listener for mousedown to start dragging
+        // Add event listeners for dragging
         canvas.addEventListener('mousedown', startDrag);
+        canvas.addEventListener('mousemove', dragText);
+        canvas.addEventListener('mouseup', stopDrag);
     </script>
 </body>
-</html>
+</html
