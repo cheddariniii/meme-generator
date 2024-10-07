@@ -223,9 +223,11 @@
                 const mouseX = event.clientX - rect.left;
                 const mouseY = event.clientY - rect.top;
 
-                // Update the text position for the selected meme
-                memePositions[selectedMeme].x = mouseX - offsetX; // Update x position
-                memePositions[selectedMeme].y = mouseY - offsetY; // Update y position
+                // Update the text position for the selected meme while enforcing boundaries
+                memePositions[selectedMeme].x = Math.max(0 + ctx.measureText(document.getElementById('custom-text').value).width / 2, 
+                    Math.min(mouseX - offsetX, canvas.width - ctx.measureText(document.getElementById('custom-text').value).width / 2));
+                memePositions[selectedMeme].y = Math.max(fontSize, 
+                    Math.min(mouseY - offsetY, canvas.height)); // Ensure y position is within bounds
                 updateMeme(); // Redraw the canvas with updated position
             }
         }
