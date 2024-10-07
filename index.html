@@ -127,11 +127,13 @@
             4: { x: 100, y: 100 }  // Initial position for Meme 4
         };
         let isDragging = false;
+        let currentMeme = 1; // Track which meme is currently selected
         let offsetX = 0, offsetY = 0; // To hold the offsets for dragging
 
         // Function to load the image
         function loadImage() {
             const selectedMeme = document.getElementById('meme-image').value;
+            currentMeme = selectedMeme; // Update the current meme
             const memeImages = [
                 "https://i.imgur.com/VUjL1Sp.png", // Meme 1
                 "https://i.imgur.com/2ECkC4c.png", // Meme 2
@@ -192,11 +194,9 @@
 
         // Function to start dragging text
         function startDrag(event) {
-            const selectedMeme = document.getElementById('meme-image').value;
             const customText = document.getElementById('custom-text').value || "Insert Text";
             const fontSize = parseInt(document.getElementById('font-size').value);
             const textWidth = ctx.measureText(customText).width;
-            const textHeight = fontSize; // Approximate height based on font size
 
             // Convert mouse position to canvas coordinates
             const rect = canvas.getBoundingClientRect();
@@ -204,9 +204,9 @@
             const mouseY = event.clientY - rect.top;
 
             // Check if the click is within the bounds of the text
-            const { x, y } = memePositions[selectedMeme]; // Get current position for selected meme
+            const { x, y } = memePositions[currentMeme]; // Get current position for selected meme
             if (mouseX >= x - textWidth / 2 && mouseX <= x + textWidth / 2 &&
-                mouseY >= y - textHeight && mouseY <= y) {
+                mouseY >= y - fontSize && mouseY <= y) {
                 isDragging = true;
                 offsetX = mouseX - x; // Calculate offset
                 offsetY = mouseY - y; // Calculate offset
@@ -216,18 +216,20 @@
         // Function to drag text
         function dragText(event) {
             if (isDragging) {
-                const selectedMeme = document.getElementById('meme-image').value;
-
                 // Convert mouse position to canvas coordinates
                 const rect = canvas.getBoundingClientRect();
                 const mouseX = event.clientX - rect.left;
                 const mouseY = event.clientY - rect.top;
 
-                // Update the text position for the selected meme while enforcing boundaries
-                memePositions[selectedMeme].x = Math.max(0 + ctx.measureText(document.getElementById('custom-text').value).width / 2, 
-                    Math.min(mouseX - offsetX, canvas.width - ctx.measureText(document.getElementById('custom-text').value).width / 2));
-                memePositions[selectedMeme].y = Math.max(fontSize, 
-                    Math.min(mouseY - offsetY, canvas.height)); // Ensure y position is within bounds
+                // Update the text position for the selected meme
+                const newX = mouseX - offsetX;
+                const newY = mouseY - offsetY;
+
+                memePositions[currentMeme].x = Math.max(0 + ctx.measureText(document.getElementById('custom-text').value).width / 2,
+                    Math.min(newX, canvas.width - ctx.measureText(document.getElementById('custom-text').value).width / 2));
+                memePositions[currentMeme].y = Math.max(0 + parseInt(document.getElementById('font-size').value),
+                    Math.min(newY, canvas.height)); // Ensure y position is within bounds
+
                 updateMeme(); // Redraw the canvas with updated position
             }
         }
