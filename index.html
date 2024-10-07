@@ -123,7 +123,7 @@
         let textX = 100; // Initial X position of text
         let textY = 100; // Initial Y position of text
         let isDragging = false;
-        let offsetX, offsetY;
+        let offsetX = 0, offsetY = 0; // To hold the offsets for dragging
 
         // Function to load the image
         function loadImage() {
@@ -209,6 +209,13 @@
 
                 textX = mouseX - offsetX; // Update text X position
                 textY = mouseY - offsetY; // Update text Y position
+
+                // Limit dragging within the canvas
+                if (textX < 0) textX = 0;
+                if (textX > canvas.width) textX = canvas.width;
+                if (textY < 0) textY = 0;
+                if (textY > canvas.height) textY = canvas.height;
+
                 updateMeme(); // Update meme with new text position
             }
         }
@@ -225,7 +232,7 @@
         canvas.addEventListener('mousedown', startDrag);
         canvas.addEventListener('mousemove', dragText);
         canvas.addEventListener('mouseup', stopDrag);
-        canvas.addEventListener('mouseleave', stopDrag); // Reset dragging when mouse leaves canvas
+        canvas.addEventListener('mouseout', stopDrag);
     </script>
 </body>
 </html>
