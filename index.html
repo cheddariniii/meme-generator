@@ -8,13 +8,13 @@
         html, body {
             margin: 0;
             padding: 0;
-            background: url('https://i.imgur.com/hXPxqnE.png') no-repeat center center fixed; /* New background image */
-            background-size: cover; /* Ensure the background covers the entire page */
-            overflow: hidden; /* Prevent scrollbars */
+            background: url('https://i.imgur.com/ImI3tHK.png') no-repeat center center fixed;
+            background-size: cover; /* This makes the background cover the entire area */
+            overflow: hidden;
         }
         #meme-container {
             width: 500px;
-            background-color: #D4D0C8;
+            background-color: rgba(212, 208, 200, 0.8); /* Slightly transparent to show background */
             border: 2px solid #808080;
             box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
             position: absolute;
@@ -141,14 +141,14 @@
             const fontSize = Math.floor(canvas.height / 12);
             ctx.fillStyle = fontColor;
             ctx.textAlign = 'center';
-            ctx.font = `bold ${fontSize}px 'MS Sans Serif', Tahoma, sans-serif`; // Made font bold
+            ctx.font = `bold ${fontSize}px 'MS Sans Serif', Tahoma, sans-serif`; // Make font bold
 
             const selectedImage = document.getElementById('meme-image').value;
 
             if (selectedImage === "https://i.imgur.com/VUjL1Sp.png") {
                 ctx.fillText(customText, canvas.width / 2, canvas.height - 40);
             } else if (selectedImage === "https://i.imgur.com/2ECkC4c.png") {
-                ctx.fillText(customText, 100, 40); // Adjusted position to fit in the frame
+                ctx.fillText(customText, canvas.width / 2, canvas.height - 30);
             } else if (selectedImage === "https://i.imgur.com/IyUsg7K.png") {
                 ctx.fillText(customText, canvas.width / 2, 60);
             } else if (selectedImage === "https://i.imgur.com/3GE4GHs.png") {
